@@ -1,41 +1,45 @@
 <template>
-  <h1> {{ title }}</h1>
-  <p>Welcome...</p>
-  <div v-if="showModal">
-    <HelloWorld theme="" @close = "toggleModal">
-      <template v-slot:links>
-        <a href="#">Sign up</a>
-        <a href="#">More info</a>
-      </template>
-      <h1>Ninja Giveaway</h1>
-      <p>Get yours today, enter the game to win a logitec mouse and keyboard</p>
-    </HelloWorld>
-  </div>
-  <button @click.alt="toggleModal">Open Modal (alt)</button>
+  <h1>A small timer game</h1>
+  <button @click="start" :disabled="isPlaying">Play</button>
+
+  <!-- <p v-if="showResults">Reaction time - {{ score }} ms</p> -->
+
+  <Block v-if="isPlaying" :delay="delay" @end="endGame" />
+  <Result v-if="showResults" :score="score" />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Block from './components/Block.vue'
+import Result from './components/Result.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  },
+  components: { Block, Result},
+
   data() {
     return {
-      title: 'My first Vue app :)',
-
-      showModal: false
+      isPlaying: false,
+      delay: null,
+      score: null,
+      showResults: false
     }
   },
 
   methods: {
-      toggleModal() {
-        this.showModal = !this.showModal
-      }
-    }
 
+    start() {
+      this.delay = 2000 + Math.random() * 5000
+      this.isPlaying = true
+      // this.isPlaying = false
+      this.showResults = false
+    },
+
+    endGame(reactionTime) {
+      this.score = reactionTime
+      this.isPlaying = false
+      this.showResults = true
+    }
+  },
 
 }
 </script>
@@ -46,7 +50,25 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #444;
   margin-top: 60px;
 }
+
+button {
+  background: #0faf87;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+button[disabled] {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
 </style>
